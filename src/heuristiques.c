@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 #include <time.h>
 #include <limits.h>
 
@@ -18,25 +19,84 @@ void print_arr(int *arr, int size) {
 
 // Fonction d'heuristique aléatoire
 int *heuristique_random(void) {
-	// Cette fonction a un nom ékivok.
 	
-	int i, r, t;
-	int *jobs = malloc(sizeof(int)*NB_JOBS); // Liste ordonnée des jobs
+  int i, r, t;
+  int *jobs = malloc(sizeof(int)*NB_JOBS); // Liste ordonnée des jobs
 
-	srand(time(NULL));
+  srand(time(NULL));
 
-	// Génération de la liste ordonnée des jobs
-	for(i = 0; i < NB_JOBS; i++) jobs[i] = i;
+  // Génération de la liste ordonnée des jobs
+  for(i = 0; i < NB_JOBS; i++) jobs[i] = i;
 
-	// Randomisation de la liste des jobs
-	for(i = NB_JOBS-1; i >= 0; i--) {
-		r = rand()%NB_JOBS;
-		t = jobs[i];
-		jobs[i] = jobs[r];
-		jobs[r] = t;
-	}
+  // Randomisation de la liste des jobs
+  for(i = NB_JOBS-1; i >= 0; i--) {
+    r = rand()%NB_JOBS;
+    t = jobs[i];
+    jobs[i] = jobs[r];
+    jobs[r] = t;
+  }
 
-	return jobs;
+  return jobs;
+}
+
+// Retourne un tableau contenant les jobs triés par leur (date de début / somme durées exécution)
+int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
+  int i, j;
+  double* rapports = malloc(NB_JOBS * sizeof(double));
+  int* solution = malloc(NB_JOBS * sizeof(int));
+
+  // On calcule les rapports
+  for (i = 0; i < NB_JOBS; i++) {    
+    rapports[i] = (double)entree[i][0] / ((double)entree[i][1] + (double)entree[i][2] + (double)entree[i][3]);
+  }
+
+  // On parcourt les rapports en sortant le minimum à chaque fois, et on met l'indice de ce minimum dans la solution
+  for (i = 0; i < NB_JOBS; i++) {    
+    double min = DBL_MAX;
+    int min_indice = -1;
+
+    for (j = 0; j < NB_JOBS; j++){
+      if (rapports[j] < min){
+	min = rapports[j];
+	min_indice = j;
+      }
+    }
+    
+    rapports[min_indice] = DBL_MAX;
+    solution[i] = min_indice;
+  }
+  
+  return solution;
+}
+
+// Retourne un tableau contenant les jobs triés par leur date de début
+int* heuristique_debut(int entree[4][NB_JOBS]){
+  int i, j;
+  int* debuts = malloc(NB_JOBS * sizeof(double));
+  int* solution = malloc(NB_JOBS * sizeof(int));
+
+  // On "copie" les dates de début
+  for (i = 0; i < NB_JOBS; i++) {    
+    debuts[i] = entree[i][0];
+  }
+
+  // On parcourt les dates en sortant le minimum à chaque fois, et on met l'indice de ce minimum dans la solution
+  for (i = 0; i < NB_JOBS; i++) {    
+    int min = INT_MAX;
+    int min_indice = -1;
+
+    for (j = 0; j < NB_JOBS; j++){
+      if (debuts[j] < min){
+	min = debuts[j];
+	min_indice = j;
+      }
+    }
+    
+    debuts[min_indice] = INT_MAX;
+    solution[i] = min_indice;
+  }
+  
+  return solution;
 }
 
 // Fonction d'heuristique "greedy"
@@ -69,7 +129,7 @@ int *heuristique_greedy(int entrees[4][NB_JOBS]) {
 	return indexes;
 }
 
-int evaluer_solution(int solution[], int entree[4][NB_JOBS]){
+int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   int i, j;
   /* etat_jobs : correspond à l'avancement dans le temps de l'exécution de chacun des NB_JOBS jobs.
    * A la fin, contient donc la date de terminaison de chacun des jobs.
@@ -112,15 +172,15 @@ int evaluer_solution(int solution[], int entree[4][NB_JOBS]){
   return cmax;
 }
 
-/*int main(int argc, char* argv[]){*/
 int main(void) {
   int entree[4][4] = {
 	  {1,1,3,6},
 	  {2,5,1,2},
 	  {3,6,7,1},
 	  {2,5,1,3}};
-  int solution[4] = {1,3,0,2};
-  int eval = evaluer_solution(solution, entree);
-  printf("eval = %d\n", eval);
+  //int solution[4] = {1,3,0,2};
+  //int eval = evaluer_solution(solution, entree);
+  //printf("eval = %d\n", eval);
+  int* solution = heuristique_debut(entree);
   return 0;
 }
