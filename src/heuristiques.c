@@ -64,6 +64,8 @@ int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
     rapports[min_indice] = DBL_MAX;
     solution[i] = min_indice;
   }
+
+  free(rapports);
   
   return solution;
 }
@@ -94,6 +96,8 @@ int* heuristique_debut(int entree[4][NB_JOBS]){
     debuts[min_indice] = INT_MAX;
     solution[i] = min_indice;
   }
+
+  free(debuts);
   
   return solution;
 }
@@ -155,7 +159,7 @@ int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   }
 
   // On avance les jobs dans les deux autres machines
-  for (i = 1; i < NB_MACHINES; i++){
+  for (i = 1; i < 3; i++){
     for (j = 0; j < NB_JOBS; j++){
       int job = solution[j];
       etat_jobs[job] += entree[job][i+1];
@@ -167,6 +171,8 @@ int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   for (i = 0; i < NB_JOBS; i++){
     cmax += etat_jobs[i];
   }
+
+  free(etat_jobs);
   
   return cmax;
 }
@@ -177,9 +183,8 @@ int main(void) {
 	  {2,5,1,2},
 	  {3,6,7,1},
 	  {2,5,1,3}};
-  //int solution[4] = {1,3,0,2};
-  //int eval = evaluer_solution(solution, entree);
-  //printf("eval = %d\n", eval);
-  int* solution = heuristique_debut(entree);
+  int solution[4] = {1,3,0,2};
+  int eval = evaluer_solution(solution, entree);
+  printf("eval = %d\n", eval);
   return 0;
 }
