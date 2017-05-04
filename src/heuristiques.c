@@ -1,12 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 
 #define NB_MACHINES 3
 #define NB_JOBS 4
 
+// Retourne un tableau contenant les jobs triés par leur (date de début / somme durées exécution)
+int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
+  int i, j;
+  double* rapports = malloc(NB_JOBS * sizeof(double));
+  int* solution = malloc(NB_JOBS * sizeof(int));
 
-int evaluer_solution(int solution[], int entree[4][NB_JOBS]){
+  // On calcule les rapports
+  for (i = 0; i < NB_JOBS; i++) {    
+    rapports[i] = (double)entree[i][0] / ((double)entree[i][1] + (double)entree[i][2] + (double)entree[i][3]);
+  }
+
+  // On parcourt les rapports en sortant le minimum à chaque fois, et on met l'indice de ce minimum dans la solution
+  for (i = 0; i < NB_JOBS; i++) {    
+    double min = DBL_MAX;
+    int min_indice = -1;
+
+    for (j = 0; j < NB_JOBS; j++){
+      if (rapports[j] < min){
+	min = rapports[j];
+	min_indice = j;
+      }
+    }
+    
+    rapports[min_indice] = DBL_MAX;
+    solution[i] = min_indice;
+  }
+  
+  return solution;
+}
+  
+
+int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   int i, j;
   /* etat_jobs : correspond à l'avancement dans le temps de l'exécution de chacun des NB_JOBS jobs.
    * A la fin, contient donc la date de terminaison de chacun des jobs.
@@ -49,10 +80,13 @@ int evaluer_solution(int solution[], int entree[4][NB_JOBS]){
   return cmax;
 }
 
+
+
 int main(int argc, char* argv[]){
   int entree[4][4] = {{1,1,3,6}, {2,5,1,2}, {3,6,7,1}, {2,5,1,3}};
-  int solution[4] = {1,3,0,2};
-  int eval = evaluer_solution(solution, entree);
-  printf("eval = %d\n", eval);
+  //int solution[4] = {1,3,0,2};
+  //int eval = evaluer_solution(solution, entree);
+  //printf("eval = %d\n", eval);
+  int* solution = heuristique_debut_par_somme(entree);
   return 0;
 }
