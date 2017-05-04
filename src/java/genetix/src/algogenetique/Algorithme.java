@@ -230,13 +230,26 @@ public class Algorithme {
             le gene du parent 1 ou du parent 2
 
 		 */
-		TODO
-		Individu produit = new Individu();
-		for (int i = 0; i < produit.retourneTaille(); i++){
-			int valeur = indiv1.retourneGene(i);
-			if (Math.random() > 0.5) valeur = indiv2.retourneGene(i);
-			produit.fixerGene(i, valeur);
+		Individu produit = new Individu(fit);
+		
+		int coupe = (int)(Math.random() * produit.retourneTaille() - 1);
+		for (int i = 0; i < coupe; i++){
+			produit.fixerGene(i, indiv1.retourneGene(i));
 		}
+		
+		int shift = 0;
+		for (int i = 0; i < produit.retourneTaille(); i++){
+			int gene = indiv2.retourneGene(i);
+			boolean doublon  = false;
+			for (int j = 0; j < coupe; j++){
+				if (produit.retourneGene(j) == gene) doublon = true;
+			}
+			if (!doublon) {
+				produit.fixerGene(coupe + shift, gene);
+				shift++;
+			}
+		}
+		
 		return produit;
 	}
 
@@ -262,11 +275,13 @@ public class Algorithme {
               avec probabilite tauxMutation changer sa valeur
 
 		 */
-		TODO
-		for (int i = 0; i < indiv.retourneTaille(); i++){
-			if (Math.random() < tauxMutation) indiv.fixerGene(i, Math.abs(indiv.retourneGene(i)-1));
-		}
-		
+		int premier = (int)(Math.random() * indiv.retourneTaille() - 1);
+		int deuxieme = (int)(Math.random() * indiv.retourneTaille() - 1);
+		if (Math.random() < tauxMutation) {
+			int temp = indiv.retourneGene(premier);
+			indiv.fixerGene(premier, indiv.retourneGene(deuxieme));
+			indiv.fixerGene(deuxieme, temp);			
+		}		
 	}
 
 	/**

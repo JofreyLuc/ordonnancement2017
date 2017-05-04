@@ -21,7 +21,7 @@ public class Individu implements Comparable{
 		for (int i = 0; i < genes.length; i++) genes[i] = i;
 		
 		for (int i = genes.length - 1; i >= 0; i--){
-			int r = (int)Math.random()*(genes.length-1);
+			int r = (int)(Math.random()*(genes.length-1));
 			int t = genes[i];
 			genes[i] = genes[r];
 			genes[r] = t;
