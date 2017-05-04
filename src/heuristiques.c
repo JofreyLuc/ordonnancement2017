@@ -2,9 +2,34 @@
 #include <stdlib.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 
 #define NB_MACHINES 3
 #define NB_JOBS 4
+
+// Fonction d'heuristique aléatoire
+int *heuristique_random(void) {
+	// Cette fonction a un nom ékivok.
+	
+	int i, r, t;
+	int *jobs = malloc(sizeof(int)*NB_JOBS); // Liste ordonnée des jobs
+
+	srand(time(NULL));
+
+	// Génération de la liste ordonnée des jobs
+	for(i = 0; i < NB_JOBS; i++) jobs[i] = i;
+
+	// Randomisation de la liste des jobs
+	for(i = NB_JOBS-1; i >= 0; i--) {
+		r = rand()%NB_JOBS;
+		t = jobs[i];
+		jobs[i] = jobs[r];
+		jobs[r] = t;
+	}
+
+	return jobs;
+}
+
 
 // Retourne un tableau contenant les jobs triés par leur (date de début / somme durées exécution)
 int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
@@ -80,9 +105,7 @@ int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   return cmax;
 }
 
-
-
-int main(int argc, char* argv[]){
+int main(void) {
   int entree[4][4] = {{1,1,3,6}, {2,5,1,2}, {3,6,7,1}, {2,5,1,3}};
   //int solution[4] = {1,3,0,2};
   //int eval = evaluer_solution(solution, entree);
