@@ -7,6 +7,15 @@
 
 #define NB_JOBS 4
 
+// Affiche une liste d'entiers
+void print_arr(int *arr, int size) {
+	int i;
+
+	for(i = 0; i < size; i++) {
+		printf("%d\n", arr[i]);
+	}
+}
+
 // Fonction d'heuristique aléatoire
 int *heuristique_random(void) {
 	
@@ -28,7 +37,6 @@ int *heuristique_random(void) {
 
   return jobs;
 }
-
 
 // Retourne un tableau contenant les jobs triés par leur (date de début / somme durées exécution)
 int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
@@ -59,7 +67,6 @@ int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
   
   return solution;
 }
-  
 
 // Retourne un tableau contenant les jobs triés par leur date de début
 int* heuristique_debut(int entree[4][NB_JOBS]){
@@ -91,6 +98,35 @@ int* heuristique_debut(int entree[4][NB_JOBS]){
   return solution;
 }
 
+// Fonction d'heuristique "greedy"
+// CETTE FONCTION EST TOTALEMENT RÉALISÉE PAR QUENTIN SONREL
+int *heuristique_greedy(int entrees[4][NB_JOBS]) {
+	int i, j, k, s;
+	int *sums = malloc(sizeof(int)*NB_JOBS);
+	int *indexes = malloc(sizeof(int)*NB_JOBS);
+	int min = INT_MAX;
+
+	for(i = 0; i < NB_JOBS; i++) {
+		s = 0;
+		for(j = 1; j < 4; j++) s += entrees[i][j];
+		sums[i] = s;
+	}
+
+	for(k = 0; k < NB_JOBS; k++) {
+		for(i = 0; i < NB_JOBS; i++) {
+			if(sums[i] < min) {
+				min = sums[i];
+				indexes[k] = i;
+			}
+		}
+		sums[indexes[k]] = INT_MAX;
+		min = INT_MAX;
+	}
+
+	free(sums);
+
+	return indexes;
+}
 
 int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   int i, j;
@@ -136,7 +172,11 @@ int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
 }
 
 int main(void) {
-  int entree[4][4] = {{1,1,3,6}, {2,5,1,2}, {3,6,7,1}, {2,5,1,3}};
+  int entree[4][4] = {
+	  {1,1,3,6},
+	  {2,5,1,2},
+	  {3,6,7,1},
+	  {2,5,1,3}};
   //int solution[4] = {1,3,0,2};
   //int eval = evaluer_solution(solution, entree);
   //printf("eval = %d\n", eval);
