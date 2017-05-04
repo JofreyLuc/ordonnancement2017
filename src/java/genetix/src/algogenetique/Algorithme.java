@@ -26,6 +26,12 @@ public class Algorithme {
 	private int      meilleurFitness  = 0xffff;
 	private int      pireFitness      = 0;
 
+	private Fitness fit;
+	
+	public Algorithme(int[][] entree, int nbJobs){
+		fit = new Fitness(entree, nbJobs);
+	}
+	
 	/**
 	 *  Execute l'algorithme jusqu'a la fin  (estFini() retourne vrai)
 	 *   
@@ -33,7 +39,7 @@ public class Algorithme {
 	public Individu executeJusquAFin(){
 
 		// Création de la population intiale (aléatoire)
-		Population pop = new Population(taillePopulationParents);
+		Population pop = new Population(taillePopulationParents, fit);
 		pop.evaluer();
 		pop.trier();
 
@@ -65,7 +71,7 @@ public class Algorithme {
 			// On affiche le nnuméro de la generation, le nombre d'evaluation
 			// la fitness du meilleur et le meuilleur indiv et la diversité
 
-			System.out.println("" + Fitness.retourneNombreEvaluations() + 
+			System.out.println("" + fit.retourneNombreEvaluations() + 
 					" " + this.meilleurFitness +
 					" " + this.pireFitness +
 					" " + pop.retourneFitnessMoyenne() +
@@ -84,7 +90,7 @@ public class Algorithme {
 	 * - fitness de zero
 	 */
 	public boolean estFini(){
-		if(Fitness.retourneNombreEvaluations() >= this.maxEvaluations )
+		if(fit.retourneNombreEvaluations() >= this.maxEvaluations )
 			return true;
 		if(this.generationsEffectuee >= this.maxGenerations)
 			return true;

@@ -5,85 +5,78 @@ import java.util.prefs.InvalidPreferencesFormatException;
 
 public class Fitness {
 
-	static int[] optimum;
-	static int evaluationsEffectuee = 0;
+	private int evaluationsEffectuee = 0;
 
+	private int nb_jobs = 4;
 
-	public static void initialiseFitness(Properties paramettres)
-			throws InvalidPreferencesFormatException {
-		String s;
+	private int[][] entree;
 
-		// Optimum par defaut
-		fixeOptimum("1111000000000000000000000000000000000000000000000000000000001111");
-
-		// prendre un optimum depuis le fichier de prametres
-		if ((s = paramettres.getProperty("optimum")) != null) 
-			fixeOptimum(s);
-		else 
-			throw new InvalidPreferencesFormatException
-			("Paramètre optimum manquant, utilisation de la valeur par défaut");
-
+	public Fitness(int[][] e, int jobs) {
+		entree = e;
+		nb_jobs = jobs;
 	}
+
 
 	/**
 	 * Retourne la taille du génome 
 	 *
 	 */
-	public static int RetourneTailleGenome() {
-		return optimum.length;
+	public int RetourneTailleGenome() {
+		return nb_jobs;
 	}
-
-
-	/**
-	 * Fixe une valeur de l'optimum global.
-	 * Une chaine de 1 et 0. 
-	 * 
-	 */
-	static void fixeOptimum(String nouveauOptimum) {
-		optimum = new int[nouveauOptimum.length()];
-		for (int i = 0; i < nouveauOptimum.length(); i++) {
-			String character = nouveauOptimum.substring(i, i + 1);
-			if (character.contains("0") || character.contains("1")) {
-				optimum[i] = Integer.parseInt(character);
-			} else {
-				optimum[i] = 0;
-			}
-		}
-	}
-
-
-	public static String afficheOptimum() {
-		String geneString = "";
-		for (int i = 0; i < optimum.length; i++) {
-			if(optimum[i]==1)
-				geneString += "1";
-			if(optimum[i]==0)
-				geneString += "0";
-		}
-
-		return geneString;
-	}
-
 
 	/**
 	 * Méthode pour évaluer un individu.
 	 * Retourne le nombre de bits correctes avec l'optimum.
 	 */
-	public static int calculeFitness(Individu indiv) {
-		int fitness = optimum.length;
-		for (int i = 0; i < indiv.retourneTaille() && i < optimum.length; i++) {
-			if (indiv.retourneGene(i) == optimum[i]) {
-				fitness--;
+	public int calculeFitness(Individu indiv) {
+
+		int i, j;
+		/* etat_jobs : correspond à l'avancement dans le temps de l'exécution de chacun des NB_JOBS jobs.
+		 * A la fin, contient donc la date de terminaison de chacun des jobs.
+		 */ 
+		int[] etat_jobs = new int[nb_jobs];
+
+		// On met la date de début minimum de chaque job dans etats_jobs
+		for (i = 0; i < nb_jobs; i++){    
+			etat_jobs[i] = entree[i][0];
+		}
+
+		// On avance le premier job dans la machine 1
+		etat_jobs[indiv.retourneGene(0)] += entree[indiv.retourneGene(0)][1];
+
+		// On avance chacun des autres jobs dans la machine 1 :
+		// max(temps de démarrage + temps d'exé machine 1, temps de fin job précédent + temps d'exé machine 1)
+		for (j = 1; j < nb_jobs; j++){
+			int job = indiv.retourneGene(j);
+			if (etat_jobs[job] > etat_jobs[indiv.retourneGene(j-1)]) {
+				etat_jobs[job] += entree[job][1];
+			} else {
+				etat_jobs[job] = etat_jobs[indiv.retourneGene(j-1)] + entree[job][1];
 			}
 		}
 
+		// On avance les jobs dans les deux autres machines
+		for (i = 1; i < 3; i++){
+			for (j = 0; j < nb_jobs; j++){
+				int job = indiv.retourneGene(j);
+				etat_jobs[job] += entree[job][i+1];
+			}
+		}
+
+		// On calcule la somme des dates de fin
+		int cmax = 0;
+		for (i = 0; i < nb_jobs; i++){
+			cmax += etat_jobs[i];
+		}
+
+
 		evaluationsEffectuee++;
-		return fitness;
-		TODO (Osef de l optimum du coup)
+		return cmax;
 	}
 
 
-	public static int retourneNombreEvaluations(){
+	public int retourneNombreEvaluations(){
 		return evaluationsEffectuee;
 	}
 

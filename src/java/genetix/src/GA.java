@@ -8,7 +8,7 @@ public class GA {
 
 
 	public static void main(String[] args) {
-
+/*
 		// Lecture des paramettre 
 		Properties paramettres = readProperties("paramettres.properties");
 
@@ -44,7 +44,12 @@ public class GA {
 				+" ("+ Fitness.calculeFitness(solution)+")");
 		System.out.println("# Optimum         : "+Fitness.afficheOptimum());
 
-
+*/
+		Individu in = new Individu();
+		in.aleatoire();
+		for (int i = 0; i < in.retourneTaille(); i++){
+			System.out.println(in.retourneGene(i));
+		}
 	}
 
 

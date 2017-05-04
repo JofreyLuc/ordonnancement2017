@@ -15,11 +15,11 @@ public class Population {
 	}
 
 	// constructeur d'une population intialiée aléatoirement 
-	public Population(int taille) {
+	public Population(int taille, Fitness f) {
 		this.individus = new ArrayList<Individu>();
 
 		for (int i = 0; i < taille; i++) {
-			Individu indiv = new Individu();
+			Individu indiv = new Individu(f);
 			indiv.aleatoire();
 			this.individus.add(indiv);
 		}
@@ -94,7 +94,14 @@ public class Population {
                    (ou le nombre de genne differents)
 
 		 */
-		TODO
+		double diversite = 0;
+		for (Individu i1 : individus){
+			for (Individu i2 : individus){
+				diversite += i1.retourneDistanceAvec(i2);
+			}
+		}
+		diversite /= retourneTaille();
+		return diversite;
 	}
 
 }
