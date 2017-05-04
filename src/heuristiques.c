@@ -7,61 +7,44 @@
 
 
 int evaluer_solution(int solution[], int entree[4][NB_JOBS]){
-  int i, j, u;
+  int i, j;
+  /* etat_jobs : correspond à l'avancement dans le temps de l'exécution de chacun des NB_JOBS jobs.
+   * A la fin, contient donc la date de terminaison de chacun des jobs.
+   */ 
   int* etat_jobs = malloc(NB_JOBS * sizeof(int));
-  for (i = 0; i < NB_JOBS; i++){
+
+  // On met la date de début minimum de chaque job dans etats_jobs
+  for (i = 0; i < NB_JOBS; i++){    
     etat_jobs[i] = entree[i][0];
   }
 
-  for (i = 0; i < NB_JOBS; i++){
-    printf("[%d] : %d, ", solution[i], etat_jobs[i]);
-  }
-  printf("\n\n");
-
-  //Premier job
+  // On avance le premier job dans la machine 1
   etat_jobs[solution[0]] += entree[solution[0]][1];
-
-  for (i = 0; i < NB_JOBS; i++){
-    printf("[%d] : %d, ", solution[i], etat_jobs[i]);
-  }
-  printf("\n\n");
   
-  //Machine 1
+  // On avance chacun des autres jobs dans la machine 1 :
+  // max(temps de démarrage + temps d'exé machine 1, temps de fin job précédent + temps d'exé machine 1)
   for (j = 1; j < NB_JOBS; j++){
     int job = solution[j];
     if (etat_jobs[job] > etat_jobs[solution[j-1]]) {
       etat_jobs[job] += entree[job][1];
     } else {
-      etat_jobs[job] = etat_jobs[job-1] + entree[job][1];
+      etat_jobs[job] = etat_jobs[solution[j-1]] + entree[job][1];
     }
   }
 
-  for (i = 0; i < NB_JOBS; i++){
-    printf("[%d] : %d, ", solution[i], etat_jobs[i]);
-  }
-  printf("\n\n");
-  
-  //Machines 2 et 3
+  // On avance les jobs dans les deux autres machines
   for (i = 1; i < NB_MACHINES; i++){
     for (j = 0; j < NB_JOBS; j++){
       int job = solution[j];
       etat_jobs[job] += entree[job][i+1];
     }
-    for (u = 0; u < NB_JOBS; u++){
-      printf("[%d] : %d, ", solution[u], etat_jobs[u]);
-    }
-    printf("\n\n");
   }
 
+  // On calcule la somme des dates de fin
   int cmax = 0;
   for (i = 0; i < NB_JOBS; i++){
     cmax += etat_jobs[i];
   }
-
-  for (i = 0; i < NB_JOBS; i++){
-    printf("[%d] : %d, ", solution[i], etat_jobs[i]);
-  }
-  printf("\n\n");
   
   return cmax;
 }
