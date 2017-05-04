@@ -5,7 +5,6 @@
 #include <time.h>
 #include <limits.h>
 
-#define NB_MACHINES 3
 #define NB_JOBS 4
 
 // Fonction d'heuristique aléatoire
@@ -38,7 +37,7 @@ int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
   int* solution = malloc(NB_JOBS * sizeof(int));
 
   // On calcule les rapports
-  for (i = 0; i < NB_JOBS; i++) {    
+  for (i = 0; i < NB_JOBS; i++) {
     rapports[i] = (double)entree[i][0] / ((double)entree[i][1] + (double)entree[i][2] + (double)entree[i][3]);
   }
 
