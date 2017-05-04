@@ -224,7 +224,7 @@ public class Algorithme {
             le gene du parent 1 ou du parent 2
 
 		 */
-
+		TODO
 		Individu produit = new Individu();
 		for (int i = 0; i < produit.retourneTaille(); i++){
 			int valeur = indiv1.retourneGene(i);
@@ -256,6 +256,7 @@ public class Algorithme {
               avec probabilite tauxMutation changer sa valeur
 
 		 */
+		TODO
 		for (int i = 0; i < indiv.retourneTaille(); i++){
 			if (Math.random() < tauxMutation) indiv.fixerGene(i, Math.abs(indiv.retourneGene(i)-1));
 		}

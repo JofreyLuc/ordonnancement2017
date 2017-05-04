@@ -94,15 +94,7 @@ public class Population {
                    (ou le nombre de genne differents)
 
 		 */
-
-		double diversite = 0;
-		for (Individu i1 : individus){
-			for (Individu i2 : individus){
-				diversite += i1.retourneDistanceAvec(i2);
-			}
-		}
-		diversite /= retourneTaille();
-		return diversite;
+		TODO
 	}
 
 }

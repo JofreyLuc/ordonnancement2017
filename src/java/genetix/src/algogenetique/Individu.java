@@ -3,7 +3,7 @@ package algogenetique;
 public class Individu implements Comparable{
 
     
-    private int[] genes;             // la liste des gènes {1,0}
+    private int[] genes;             // la liste des gènes
     private int fitness = 0;         // la fitness de cet individu 
     private boolean aevaluer = true; // pour ne pas evaluer plusieurs fois
     
@@ -20,6 +20,7 @@ public class Individu implements Comparable{
             int gene = (int) Math.round(Math.random());
             genes[i] = gene;
         }
+        TODO
     }
 
     // Retourne le gene d'indice index
