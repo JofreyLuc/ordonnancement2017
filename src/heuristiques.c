@@ -3,31 +3,31 @@
 #include <math.h>
 #include <float.h>
 #include <time.h>
+#include <limits.h>
 
 #define NB_MACHINES 3
 #define NB_JOBS 4
 
 // Fonction d'heuristique aléatoire
 int *heuristique_random(void) {
-	// Cette fonction a un nom ékivok.
 	
-	int i, r, t;
-	int *jobs = malloc(sizeof(int)*NB_JOBS); // Liste ordonnée des jobs
+  int i, r, t;
+  int *jobs = malloc(sizeof(int)*NB_JOBS); // Liste ordonnée des jobs
 
-	srand(time(NULL));
+  srand(time(NULL));
 
-	// Génération de la liste ordonnée des jobs
-	for(i = 0; i < NB_JOBS; i++) jobs[i] = i;
+  // Génération de la liste ordonnée des jobs
+  for(i = 0; i < NB_JOBS; i++) jobs[i] = i;
 
-	// Randomisation de la liste des jobs
-	for(i = NB_JOBS-1; i >= 0; i--) {
-		r = rand()%NB_JOBS;
-		t = jobs[i];
-		jobs[i] = jobs[r];
-		jobs[r] = t;
-	}
+  // Randomisation de la liste des jobs
+  for(i = NB_JOBS-1; i >= 0; i--) {
+    r = rand()%NB_JOBS;
+    t = jobs[i];
+    jobs[i] = jobs[r];
+    jobs[r] = t;
+  }
 
-	return jobs;
+  return jobs;
 }
 
 
@@ -61,6 +61,37 @@ int* heuristique_debut_par_somme(int entree[4][NB_JOBS]){
   return solution;
 }
   
+
+// Retourne un tableau contenant les jobs triés par leur date de début
+int* heuristique_debut(int entree[4][NB_JOBS]){
+  int i, j;
+  int* debuts = malloc(NB_JOBS * sizeof(double));
+  int* solution = malloc(NB_JOBS * sizeof(int));
+
+  // On "copie" les dates de début
+  for (i = 0; i < NB_JOBS; i++) {    
+    debuts[i] = entree[i][0];
+  }
+
+  // On parcourt les dates en sortant le minimum à chaque fois, et on met l'indice de ce minimum dans la solution
+  for (i = 0; i < NB_JOBS; i++) {    
+    int min = INT_MAX;
+    int min_indice = -1;
+
+    for (j = 0; j < NB_JOBS; j++){
+      if (debuts[j] < min){
+	min = debuts[j];
+	min_indice = j;
+      }
+    }
+    
+    debuts[min_indice] = INT_MAX;
+    solution[i] = min_indice;
+  }
+  
+  return solution;
+}
+
 
 int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   int i, j;
@@ -110,6 +141,6 @@ int main(void) {
   //int solution[4] = {1,3,0,2};
   //int eval = evaluer_solution(solution, entree);
   //printf("eval = %d\n", eval);
-  int* solution = heuristique_debut_par_somme(entree);
+  int* solution = heuristique_debut(entree);
   return 0;
 }
