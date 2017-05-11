@@ -315,6 +315,10 @@ public class Algorithme {
 		return nouveaux;
 		
 	}
+	
+	public Fitness getFitness(){
+		return fit;
+	}
 
 	/**
 	 * Méthode  qui lit les paramètres.

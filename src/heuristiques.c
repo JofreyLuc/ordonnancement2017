@@ -177,6 +177,7 @@ int evaluer_solution(int solution[], int entree[NB_JOBS][4]){
   return cmax;
 }
 
+
 int main(void) {
   int entree[4][4] = {
 	  {1,1,3,6},

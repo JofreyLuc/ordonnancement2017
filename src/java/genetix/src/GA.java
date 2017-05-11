@@ -8,22 +8,17 @@ public class GA {
 
 
 	public static void main(String[] args) {
-/*
+
 		// Lecture des paramettre 
 		Properties paramettres = readProperties("paramettres.properties");
 
+		int[][] entree = new int[][] {{1,1,3,6}, {2,5,1,2}, {3,6,7,1}, {2,5,1,3}};
+		int nb_jobs = 4;
+		
 		// Creation et parametrage de l'algorithme
-		Algorithme algo = new Algorithme();
+		Algorithme algo = new Algorithme(entree, nb_jobs);
 		try {
 			algo.parametrerAlgorithme(paramettres);
-		}
-		catch (InvalidPreferencesFormatException e) {
-			System.err.println(e.getMessage());
-		}
-
-		// Parametrage de la fitness
-		try {
-			Fitness.initialiseFitness(paramettres);
 		}
 		catch (InvalidPreferencesFormatException e) {
 			System.err.println(e.getMessage());
@@ -33,23 +28,12 @@ public class GA {
 
 		System.out.println("# Execution avec les parametre suivants:");
 		System.out.println("# "+paramettres);
-		System.out.println("# Optimum : "+Fitness.afficheOptimum());
-		System.out.println("# Dimension : "+Fitness.RetourneTailleGenome());
 
 
 		// execute l'algorithme
 		Individu solution = algo.executeJusquAFin();
 
-		System.out.println("# Solution finale : "+ solution
-				+" ("+ Fitness.calculeFitness(solution)+")");
-		System.out.println("# Optimum         : "+Fitness.afficheOptimum());
-
-*/
-		Individu in = new Individu();
-		in.aleatoire();
-		for (int i = 0; i < in.retourneTaille(); i++){
-			System.out.println(in.retourneGene(i));
-		}
+		System.out.println("# Solution finale : "+ solution +" ("+ algo.getFitness().calculeFitness(solution)+")");
 	}
 
 
