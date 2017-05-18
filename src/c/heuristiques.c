@@ -103,19 +103,20 @@ int* heuristique_debut(int entree[4][NB_JOBS]){
 }
 
 // Fonction d'heuristique "greedy"
-// CETTE FONCTION EST TOTALEMENT RÉALISÉE PAR QUENTIN SONREL
 int *heuristique_greedy(int entrees[4][NB_JOBS]) {
 	int i, j, k, s;
 	int *sums = malloc(sizeof(int)*NB_JOBS);
 	int *indexes = malloc(sizeof(int)*NB_JOBS);
 	int min = INT_MAX;
 
+	// Somme des temps d'executions des jobs
 	for(i = 0; i < NB_JOBS; i++) {
 		s = 0;
 		for(j = 1; j < 4; j++) s += entrees[i][j];
 		sums[i] = s;
 	}
 
+	// Création de la liste ordonnées des index des jobs (par temps d'execution donc)
 	for(k = 0; k < NB_JOBS; k++) {
 		for(i = 0; i < NB_JOBS; i++) {
 			if(sums[i] < min) {
