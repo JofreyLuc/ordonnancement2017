@@ -125,7 +125,7 @@ Ce modèle linéaire ne classe les jobs que par rapport à la première machine,
 	\item $\sum_{x_{ij}} = nbJobs-1$ (par exemple, trois variables suffisent à décrire l'ordre de quatre jobs)
 	\item $x_{ii} = 0$
 	\item $x_{ij} \in \{0, 1\}$
-	\item $\sum_{k=p\backslash\{i\}} < 1$ (un job ne précède au maximum qu'un seul autre job)
+	\item $\sum_{k=p\backslash\{i\}} x_{ik} < 1$ (un job ne précède au maximum qu'un seul autre job)
 	\item $debut_j >= dateArrivee_j$ et $debut_j >= x_{ij}(debut_i+p_i)$ (la date de début d'un job est supérieure à sa date d'arrivée et à la date de fin du job précédent (s'il existe))
 \end{itemize}
 
@@ -139,7 +139,7 @@ Ce modèle linéaire ne classe les jobs que par rapport à la première machine,
 \paragraph{Données :}
 
 \begin{itemize}
-	\item $p_j$ = temps d'éxecutuin de $j$ sur la première machine.
+	\item $p_j$ = temps d'exécution de $j$ sur la première machine.
 	\item $dateArrivee_j$ = date minimale de départ de $j$.
 \end{itemize}
 
