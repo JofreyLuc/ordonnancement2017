@@ -1,0 +1,187 @@
+\documentclass[11pt]{article} % taille de police et type de document
+
+\usepackage[utf8]{inputenc} % encodage des caractères
+\usepackage[french]{babel} % langue du document
+\usepackage[a4paper, margin=1in]{geometry} % format papier et taille de marge
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=black, pdfborder={0 0 0 [0 0]}]{hyperref} % gestion des liens hypertextes (bordures invisibles)
+\usepackage{color} % gestion des couleurs (\color{couleur} et \definecolor{...})
+\usepackage{eurosym} % pour le symbole € (\euro)
+\usepackage{graphicx} % pour inclure des images (\includegraphics[angle, scale, height, width, page]{image.png})
+\usepackage{tabularx} % pour les tableaux (\begin{tabularx}{taille}{|X|X|X|})
+\usepackage{listings} % pour l'inclusion de code (\lstinputlisting[language=foo]{ficher.foo})
+\usepackage{wrapfig} % pour intégrer une figure dans un texte (\begin{wrapfig}{taille})
+\usepackage{tocloft} % meilleure toc
+%\usepackage{showframe} % pour afficher les bordures des marges/zones de texte
+
+\definecolor{commentcolor}{rgb}{0.50, 0.50, 0.50} % couleur grise pour les commentaires
+\definecolor{forest}{rgb}{0.13, 0.55, 0.13} %vert pas moche
+
+\lstset{ % style des inclusions de code
+	basicstyle=\footnotesize,
+	frame=single,
+	numbers=left,
+	breaklines=true,
+	showstringspaces=false,
+	rulecolor=\color{black},
+	commentstyle=\color{commentcolor},
+	keywordstyle=\color{blue},
+	stringstyle=\color{red},
+	backgroundcolor=\color{white},
+}
+
+% caractères spéciaux pour lstinput
+\lstset{literate=
+	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+	{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+	{à}{{\`a}}1 {è}{{\'e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+	{À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+	{ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+	{Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+	{â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+	{Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+	{œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+	{ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+	{€}{{\euro}}1 {£}{{\pounds}}1
+}
+
+% dots pour les sections dans la toc
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% page de toc non numérotée
+\let\stdtoc\tableofcontents
+\renewcommand\tableofcontents{\thispagestyle{empty}\setcounter{page}{0}\stdtoc}
+
+% nouvelle page à chaque \part et reset du numéro de section
+\let\stdpart\part
+\renewcommand\part{\newpage\setcounter{section}{0}\stdpart}
+
+\title{Mini projet d'ordonnancement - Projet 7}
+\author{Valerian \bsc{Damm} \and Jofrey \bsc{Luc} \and Quentin \bsc{Sonrel}}
+\date\today
+
+\begin{document} % début du corps du document
+
+\maketitle
+%\input{titlepage.tex}
+%\thispagestyle{empty}
+
+%\newpage
+%\vspace*{\fill}
+%PREFACE ICI
+%\vspace*{\fill}
+%\thispagestyle{empty}
+
+%\newpage
+%\tableofcontents
+%\thispagestyle{empty}
+
+%\newpage
+%\setcounter{page}{1}
+
+% header pour les gros rapports
+%\pagestyle{myheadings}
+%\renewcommand{\sectionmark}[1]{\markright{Partie \thepart, section \thesection : #1}{}}
+
+\section{Heuristiques en C}
+
+En C, nous représentons le problème par :
+
+\begin{itemize}
+	\item en entrée/contraintes : un tableau de 4 lignes par $nbJobs$ colonnes. Le première ligne indique la date d'arrivée du job, la deuxième son temps d'exécution sur la première machine, la troisième son temps sur la deuxième machine, et la quatrième son temps sur la troisième machine.
+	\item en solution : un tableau de taille $nbJobs$, qui nous donne l'ordre d'exécution des jobs sur les machines. Cet ordre sera le même pour les trois machines, puisque si un ordre est optimal sur la première machine il l'est aussi sur les deux autres.\\
+\end{itemize}
+
+Nous avons donc cinq fonctions :
+
+\begin{itemize}
+	\item evaluer\_solution, qui calcule notre $Cmax$ en prenant en entrée un tableau de contraintes et une solution;
+	\item heuristique\_random, qui nous donne une solution aléatoire (en utilisant l'algorithme Fisher-Yates shuffle);
+	\item heuristique\_debut\_par\_somme, qui nous retourne une solution avec les jobs ordonnés par le rapport entre leur date d'arrivée et la somme de leurs temps d'exécution;
+	\item heuristique\_debut, qui nous retourne une solution avec les jobs ordonnés par leur date d'arrivée;
+	\item heuristique\_greedy, qui nous retourne une solution avec les jobs ordonnés par la somme de leurs temps d'exécution.
+\end{itemize}
+
+\section{Algorithme génétique}
+Nous avons fait l'algorithme génétique en java. Le code est séparé entre quatre classes principales : 
+\begin{itemize}
+	\item Algorithme.java, qui contient l'exécution de l'algorithme génétique en soi (crée une population, boucler sur les générations en sélectionnant les meilleurs individus);
+	\item Fitness.java, qui contient la fonction de calcul de la fitness/la qualité d'un individu, c'est à dire le calcul de Cmax dans notre cas.
+	\item Individu.java, qui contient la définition et les fonctions liées à nos individus (en l'occurence des solutions constituées d'un tableau contenant l'ordre d'exécution des jobs);
+	\item Population.java, qui contient la définition et les fonctions liées à une population d'individus.\\
+\end{itemize}
+
+Le main se trouve dans la classe GA.java.
+
+\section{Modèle linéaire}
+
+Nous n'avons pas réussi à installer CPlex (l'installeur ne se lance même pas et plante au démarrage chez moi), voici donc le modèle linéaire, que nous n'avons pas pu tester.
+Ce modèle linéaire ne classe les jobs que par rapport à la première machine, puisque l'ordre ne change pas sur les autres.\\
+
+\paragraph{Fonction objectif :} $O = min(max(x_{ij}[debut_j+p_j]))$
+
+\paragraph{Contraintes :}
+\begin{itemize}
+	\item $O >= \sum_{p_i}$ (l'objectif est forcément supérieur à la somme des temps d'exécution)
+	\item $\sum_{x_{ij}} = nbJobs-1$ (par exemple, trois variables suffisent à décrire l'ordre de quatre jobs)
+	\item $x_{ii} = 0$
+	\item $x_{ij} \in \{0, 1\}$
+	\item $\sum_{k=p\backslash\{i\}} < 1$ (un job ne précède au maximum qu'un seul autre job)
+	\item $debut_j >= dateArrivee_j$ et $debut_j >= x_{ij}(debut_i+p_i)$ (la date de début d'un job est supérieure à sa date d'arrivée et à la date de fin du job précédent (s'il existe))
+\end{itemize}
+
+\paragraph{Variables :}
+
+\begin{itemize}
+	\item $x_{ij} = 1$ : le job $j$ suit immédiatement le job $i$.
+	\item $debut_j$ : date de départ sur la première machine de la tâche $j$.
+\end{itemize}
+
+\paragraph{Données :}
+
+\begin{itemize}
+	\item $p_j$ = temps d'éxecutuin de $j$ sur la première machine.
+	\item $dateArrivee_j$ = date minimale de départ de $j$.
+\end{itemize}
+
+\section{Comparaison des résultats}
+
+Dans l'ensemble, les heuristiques "simples" codées en C n'étant pas très recherchées, sur les mêmes exemples, l'algorithme génétique donne de meilleurs résultats que les heuristiques. (La meilleure heuristique semblant être celle qui utilise les rapports entre la date d'arrivée des jobs et la somme de leur temps d'exécution).
+
+% annexes
+%\appendix
+%\renewcommand{\sectionmark}[1]{\markright{Annexes - \thesection. #1}{}}
+
+%\newpage
+%\part*{Annexes}
+%\addcontentsline{toc}{part}{Annexes}
+%\setcounter{part}{0}
+%\setcounter{section}{0}
+
+\end{document}
+
+% Mise en forme :
+
+% \textbf{texte} -> gras
+% \emph{text} -> italique
+% \noindent -> supprimer l'indentation du prochain paragraphe
+% \pagestyle{empty, plain, heading, myheadings} -> style de la page
+% \thispagestyle{style} -> style de la présente page
+% \renewcommand{\sectionmark}[1]{\markright{Partie \thepart, section \thesection : #1}{}} -> À utiliser dans le cas d'une style de page myheadings
+
+% Autre :
+
+% \addcontentsline{toc}{niveau}{nom} -> ajouter une ligne à la table des matières manuellement
+% \setcounter{niveau}{numéro} -> changer la numérotation d'un niveau (ex: \setcounter{section}{0})
+% \appendix -> passer aux annexes
+% \href{url}{nom} -> lien hypertexte
+% \phantom{} -> espace vide (pour ne pas fusionner "--" par exemple)
+% \shorthandoff{caractère} -> supprimer l'espace avant/après un caractère
+
+% Mesures :
+
+% \textwidth -> largeur du texte
+% \linewidth -> longueur de la ligne
+
+% Astuces :
+
+% Pour bien placer les figures (si besoin) : \begin{figure}{h!} et \clearpage après la figure
